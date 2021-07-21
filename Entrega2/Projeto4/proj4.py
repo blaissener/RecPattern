@@ -26,18 +26,70 @@ def createCircularDistribution(x, y, r, n):
     return(data)
 
 
-x = [0, 1, 5]
-y = [0, 4, 1]
-r = [1, 2, 1]
+def displace1(x, y):
+    print(np.sign(x))
+    print(np.sign(y))
+    return [-x**2 * np.sign(x), -y**2 * np.sign(y)]
 
-circles = createCircularDistribution(x, y, r, 300)
+def drawFig(x, y):
+    my_dpi=96
+    plt.figure(figsize=(800/my_dpi, 800/my_dpi), dpi=my_dpi)
 
-x = circles[:, 0]
-y = circles[:, 1]
+    plt.scatter(x, y, s=1)
+    plt.xlim(-1.5,1.5)
+    plt.ylim(-1.5,1.5)
+    #plt.savefig('my_fig.png', dpi=my_dpi)
+    plt.show()
 
-print(x)
-print(y)
+def drawQuiver(u, v):
+    plt.quiver(u, v)
+    plt.show()
 
+def displacementModification(x, y, r):
+        
+    ###Generating circles
+    circles = createCircularDistribution(x, y, r, 1000)
 
-plt.scatter(x, y)
-plt.show()
+    x = circles[:, 0]
+    y = circles[:, 1]
+
+    ###Points after transformation by Displacement Filed
+    data = displace1(x, y)
+
+    xbar = data[0]
+    ybar = data[1]
+    
+    ####Displacement Field
+    X, Y = np.meshgrid(np.arange(-1.5, 1.5, .1), np.arange(-1.5, 1.5, .1))
+    u =  -X**2 * np.sign(X)
+    v =  -Y**2 * np.sign(Y)
+
+    my_dpi=96
+    plt.figure(figsize=(1000/my_dpi, 1000/my_dpi), dpi=my_dpi)
+    plt.quiver(X, Y, u, v, units='width', color="blue", label="Displacement Field")
+    plt.scatter(x, y, color='orange', label = "Circle", s=3)
+    plt.scatter(x+xbar, y+ybar, color='gray', label = "Modified Circle", s=3)
+    # plt.xlim(-1.5,1.5)
+    # plt.ylim(-1.5,1.5)
+    plt.legend()
+    plt.show()
+
+###Single circle radius 1 and origin centered
+x = [0]
+y = [0]
+r = [1]
+
+displacementModification(x, y, r)
+
+###Two circles, radius 0.25, one centered at [-0.5, 0] and the other [0.5, 0]
+
+# x = [-0.5, 0.5]
+# y = [0, 0]
+# r = [0.25, 0.25]
+
+# circles = createCircularDistribution(x, y, r, 1000)
+
+# x = circles[:, 0]
+# y = circles[:, 1]
+
+#drawFig(x,y)

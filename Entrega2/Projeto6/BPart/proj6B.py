@@ -149,40 +149,26 @@ def sigmoidDiscrim(weights, stim, labelsTest):
 
     guess = []
     
-    
-
     for i in range(len(stim)):
         proj = []
         s = []
         out = []
+        
         for j in range(len(weights)):
-            s.append(np.dot(stim[i], weights[j]))
-        
-        a = max(s)
-        b = min(s)
+            s.append(np.dot(stim[i], weights[j])/1000000)
 
-        aNorm = (s - b ) / (a - b)
         
-        for i in range(len(aNorm)):
-            out.append(sigmoidFunc(aNorm[i], 5))
+
+        for k in range(len(s)):
+            out.append(sigmoidFunc(s[j], 5))
         
-        if(i == 2963):
-            print(aNorm)
-            print(out)
-            plt.plot(aNorm, out)
-            plt.xlabel("In(S)")
-            plt.ylabel("Out(A(S))")
-            plt.show()
-            #scatter.append([dotProd, thresh])
-        #     if (dotProd>= thresh):
-        #         proj.append(dotProd)
-        #     else:
-        #         proj.append(0)
-        # #print(proj)
         
-        #ansatz = np.argmax(proj)
-        #guess.append([ansatz, labelsTest[i]])
-    #print(scatter)
+
+        print(out)
+        ansatz = np.argmax(out)
+        guess.append([ansatz, labelsTest[i]])
+    
+    #print(guess)
     
     return guess
 
