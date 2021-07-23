@@ -28,14 +28,21 @@ def createCircularDistribution(x, y, r, n):
 
 def displace3(x, y):
     
-    return [-x**2 * np.sign(x)/2, -y**2 * np.sign(y)/2]
+    return [x+(-x**2 * np.sign(x)/2), y+(-y**2 * np.sign(y)/2)]
 
 def displace4(x, y):
-    return [(x**2 + y**2) * np.sign(x) , (x**2 + y**2) * np.sign(y)]
+    
+    s = 0.3**2
+    c = [[0.25, 0.25], [-0.25, -0.25]]
+    # for i in range(len(c)):
+    #     x = np.exp(-( (x-c[i][0])**2) /(s) + y-c[i][1])**2) /(s))
+    #     y = np.exp(-( (x-c[i][0])**2) /(s) + y-c[i][1])**2) /(s))
+
+    return [x, y]
 
 def displace5(x, y):
     
-    return [np.power(-x, 3) ,0]
+    return [np.power(-np.sign(x)+x, 3) ,0]
 
 def displace6(x, y):
     
@@ -55,9 +62,7 @@ def displace8(x, y):
     xMean = np.mean(x)
     yMean = np.mean(y)
 
-    return [(x-xMean*x)/(xStd*x), (y-yMean*y)/(yStd*y)]
-
-
+    return [(x-xMean)/(xStd), (y-yMean)/(yStd)]
 
 def pca(x, y, r):
 
@@ -113,18 +118,18 @@ def displacementModification(x, y, r):
     y = circles[:, 1]
 
     ###Points after transformation by Displacement Filed
-    data = displace8(x, y)
+    data = displace3(x, y)
 
     xbar = data[0]
     ybar = data[1]
     
     ####Displacement Field
     
-    grid = [-5, 5, 0.1]
+    grid = [-1, 1, 0.1]
 
     X, Y = np.meshgrid(np.arange(grid[0], grid[1], grid[2]), np.arange(grid[0], grid[1], grid[2]))
     
-    fieldData = displace8(X, Y)
+    fieldData = displace3(-X, -Y)
 
     u = fieldData[0]
     v = fieldData[1]
@@ -162,13 +167,13 @@ def displacementModification(x, y, r):
 
     ax1.scatter(x, y, color='orange', label = "Circle", s=3, )
     ax2.quiver(X, Y, u, v, units='width', color="blue", label="Displacement Field")
-    ax3.scatter(x+xbar, y+ybar, color='gray', label = "Modified Circle", s=3)
+    ax3.scatter(xbar, ybar, color='gray', label = "Modified Circle", s=3)
     
     #plt.quiver(X, Y, u, v, units='width', color="blue", label="Displacement Field")
     #plt.scatter(x, y, color='orange', label = "Circle", s=3)
     #plt.scatter(x+xbar, y+ybar, color='gray', label = "Modified Circle", s=3)
     #plt.legend()
-    plt.savefig('displace6.png', bbox_inches='tight')
+    #plt.savefig('displace6.png', bbox_inches='tight')
     plt.show()
 
 ###Single circle radius 1 and origin centered
@@ -188,9 +193,13 @@ r = [1]
 # y = [0.5, 0.5]
 # r = [0.25, 0.25]
 
+# x = [0.25, -0.25]
+# y = [0.25, -0.25]
+# r = [0.25, 0.25]
 
-#displacementModification(x, y, r)
-pca(x, y, r)
+
+displacementModification(x, y, r)
+#pca(x, y, r)
 
 
 # circles = createCircularDistribution(x, y, r, 1000)

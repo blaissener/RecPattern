@@ -117,7 +117,7 @@ def createConfusionMat(guessed,numberOfEachDigitTest):
     plt.xlabel("Real") 
     plt.ylabel("Inferido")
     plt.tick_params(axis='both', which='major', labelsize=10, labelbottom = False, bottom=False, top = False, labeltop=True)
-    plt.title("noErodeZero")
+    plt.title("One Weighs")
     plt.show()
     '''
     To normalize:
@@ -145,7 +145,7 @@ def chooseOne(sortedTrain, numberOfEachDigitTest):
 
     return choosen
 
-def sigmoidDiscrim(weights, stim, labelsTest):
+def sigmoidDiscrim(weights, stim, labelsTest, img):
 
     guess = []
     
@@ -157,14 +157,33 @@ def sigmoidDiscrim(weights, stim, labelsTest):
         for j in range(len(weights)):
             s.append(np.dot(stim[i], weights[j])/1000000)
 
-        
+        s = np.array(s)
+        sMax = s.max()
+        sMin = s.min()
 
+        s = (s-sMin) / (sMax-sMin)
+
+        #print(s)
+
+        sigB = 15
         for k in range(len(s)):
-            out.append(sigmoidFunc(s[j], 5))
-        
-        
+            out.append(sigmoidFunc(s[k], sigB))
+            #print(out[-1])
 
-        print(out)
+        # if(labelsTest[i] == 0):
+        #     x = np.round(np.arange(-1.1, 1.1, 0.01), 2)
+        #     p = sigmoidFunc(x, sigB)
+        #     plt.plot(x, p, color='gray',)
+        #     plt.title("Sigmoid "r'$P = A_{(s)} = \frac{1}{1+\exp^{-s\beta}} - 0.5$')
+        #     plt.scatter(s, out, color="orange", label = "Inferido")
+        #     plt.imshow(img[i], extent=[-0.25, (-0.25+.28), 0.7, 1], cmap='gray',)
+        #     for l in range(len(out)):
+        #         plt.annotate(str(l), (s[l], out[l]))
+        #     plt.ylim(-0.25, 1)
+        #     plt.xlim(-0.25, 1.1)
+        #     plt.legend()
+        #     plt.show()
+        # print(out)
         ansatz = np.argmax(out)
         guess.append([ansatz, labelsTest[i]])
     
@@ -191,6 +210,7 @@ def sigmoid(x, b):
     plt.grid()
     plt.show()
 
+'''
 # x = np.round(np.arange(-1.1, 1.1, 0.01), 2)
 
 # sigmoid(x, 15.5)
@@ -200,29 +220,40 @@ def sigmoid(x, b):
 # plt.show()
 # plt.imshow(imagesSorted[5923])
 # plt.show()
+'''
 
 
+###LoadDataset and extract info
 names = ["train-images.idx3-ubyte", "train-labels.idx1-ubyte"]
 
 sortedTrain, labelsTrain, sortedTest, labelsTest, digitsTrain, numberOfEachDigitTrain, digitsTest, numberOfEachDigitTest  = loadSet(names)
 
 print(numberOfEachDigitTest)
 
+###Template------------
+##Media dos numeros
 average = meanSet(digitsTrain, numberOfEachDigitTrain , sortedTrain)
 
-stimulus = createStimulus(sortedTest)
+print(norm(average))
 
+##Um numero soh
 choosen = chooseOne(sortedTrain,numberOfEachDigitTrain)
 
-weights = createWeights(average)
+##Criando vetor 1D
+stimulus = createStimulus(sortedTest)
+weights = createWeights(choosen)
 
-#guessed = projection(weights, stimulus, labelsTest)
 
-guessedSig = sigmoidDiscrim(weights, stimulus, labelsTest)
+####Tipo de ativacao
+guessed = projection(weights, stimulus, labelsTest)
+
+#guesedSig = sigmoidDiscrim(weights, stimulus, labelsTest, sortedTest)
+
+####Show confusionMat
 
 #createConfusionMat(guessed, numberOfEachDigitTest)
+createConfusionMat(guessed, numberOfEachDigitTest)
 
-createConfusionMat(guessedSig, numberOfEachDigitTest)
 
 
 
@@ -247,7 +278,7 @@ createConfusionMat(guessedSig, numberOfEachDigitTest)
 '''
 
 ###checkNorm
-# avgNorm = norm(average)
+avgNorm = norm(average)
 
 # choosenNorm = norm(choosen)
 
